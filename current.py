@@ -10,12 +10,12 @@ def getData(serial, api_key):
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
         # Success
-        data = response.json()
+        data = response.json()['data']
     else:
         # Error
         data = {"error": response.status_code}
     
-    return data['data']
+    return data
 
 
 #Example use
