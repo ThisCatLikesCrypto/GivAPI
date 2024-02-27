@@ -1,1 +1,1 @@
-  pass
+print("init.py worked yay")
