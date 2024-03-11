@@ -1,1 +1,1 @@
-print("init.py worked yay")
+print("Welcome to GivAPI.")
