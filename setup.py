@@ -8,4 +8,5 @@ setup(
     author='Wilbur Williams',
     description='Gets current data from the GivEnergy API',
     url='https://github.com/ThisCatLikesCrypto/GivAPI',
+    long_description_content_type='text/markdown'
 )
