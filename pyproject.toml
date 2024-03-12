@@ -15,7 +15,3 @@ requests = "*"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2"
-
-[tool.poetry.metadata]
-description-file = "README.md"  # Specify your README file here
-long_description_content_type = "text/markdown"  # Explicitly set the content type
