@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "GivAPI"
 version = "0.1.1"
 description = "Pulls current data from the GivEnergy API"
-authors = ["Wilbur Williams <wilburwilliams.uk>"]
+authors = ["Wilbur Williams <notanemailaddress@wilburwilliams.uk>"]
 license = "GPL-3.0"
 
 [tool.poetry.dependencies]
