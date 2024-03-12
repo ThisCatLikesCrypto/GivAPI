@@ -6,6 +6,23 @@ on:
       - '*'
 
 jobs:
+
+  install-poetry:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x' # Specify the Python version you need
+
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python -
+          
   deploy:
     runs-on: ubuntu-latest
 
