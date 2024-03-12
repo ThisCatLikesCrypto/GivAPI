@@ -7,7 +7,7 @@ name = "GivAPI"
 version = "0.1.1"
 description = "Pulls current data from the GivEnergy API"
 authors = ["https://wilburwilliams.uk"]
-license = { file = "LICENSE" }
+license = "GPL-3.0"
 
 [tool.poetry.dependencies]
 python = "^3.6"
