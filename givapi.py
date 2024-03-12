@@ -1,5 +1,6 @@
 import requests
 
+#Gets current data
 def getData(serial, api_key):
     url = "https://api.givenergy.cloud/v1/inverter/" + serial + "/system-data/latest"
     headers = {
