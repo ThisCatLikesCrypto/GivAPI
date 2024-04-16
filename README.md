@@ -1,5 +1,5 @@
 # GivAPI
-GivEnergy API Interface. Doesn't include much at the moment.  
+GivEnergy API Interface.
 Install with pip install GivAPI (import with 'import givapi').  
 
 # Functions
