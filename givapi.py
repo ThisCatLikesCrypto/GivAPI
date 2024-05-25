@@ -16,9 +16,13 @@ def get(api_key, url, params=None):
     if response.status_code == 200 or 201:
         # Success
         try:
+            if response.json()['messsage'] == "Unauthenticated.":
+                data = {"error": "Not Authenticated"}
             data = response.json()['data']
+            if data['message']:
+                data = {"error": data['message']}
         except: 
-            data = {"error":"No data attribute. response.json() is "+response.json()}
+            data = {"error": f"No data attribute (not auth error). response.json() is {response.json()}"}
     else:
         # Error
         data = {"error": response.status_code}
@@ -148,9 +152,35 @@ def setSet(serial, api_key, setting_id, value):
     return post(api_key, url, value)
 
 
+##!Extra: Elexon and Carbon Intensity APIs
+def getElexon():
+    url = "https://data.elexon.co.uk/bmrs/api/v1/generation/actual/per-type/day-total?format=json"
+    headers = {"accept": "application/json"}
+    response = requests.get(url=url, headers=headers)
+    return response.json()
+
+def getGen():
+    headers = {'Accept': 'application/json'}
+    r = requests.get('https://api.carbonintensity.org.uk/generation', params={}, headers = headers)
+    data = r.json()['data']
+    return data
+
+def getCO2():
+    headers = {'Accept': 'application/json'}
+    r = requests.get('https://api.carbonintensity.org.uk/intensity', params={}, headers = headers)
+    data = r.json()['data']
+    return data
+
 #Example use
 if __name__ == "__main__":
-    api_key = "YOUR_API_KEY"
-    serial = getSerial(api_key)
-    print(getData(serial, api_key))
-    print(readSet(serial, api_key, 96)) #96 is 'Pause Battery', I just needed something to test POST
+    api_key = "YOUR_KEY_HERE"
+    try:
+        serial = getSerial(api_key)
+        print(getData(serial, api_key))
+        if input("test post? (y/n): ") == "y":
+            print(readSet(serial, api_key, 96)) #96 is 'Pause Battery', I just needed something to test POST
+    except KeyError:
+        print("Probably not authed correctly. Just testing elexon and CO2")
+    print(getElexon())
+    print(getGen())
+    print(getCO2())
