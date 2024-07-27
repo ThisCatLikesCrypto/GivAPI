@@ -15,14 +15,7 @@ def get(api_key, url, params=None):
         response = requests.get(url, headers=headers, params=params) #Cannot be triggered atm but leave in
     if response.status_code == 200 or 201:
         # Success
-        try:
-            if response.json()['messsage'] == "Unauthenticated.":
-                data = {"error": "Not Authenticated"}
-            data = response.json()['data']
-            if data['message']:
-                data = {"error": data['message']}
-        except: 
-            data = {"error": f"No data attribute (not auth error). response.json() is {response.json()}"}
+        data = response.json()['data']
     else:
         # Error
         data = {"error": response.status_code}
