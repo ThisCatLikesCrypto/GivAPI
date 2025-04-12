@@ -1,14 +1,14 @@
 # GivAPI
-GivEnergy API Interface.
+GivEnergy API Interface.  
 Install with pip install GivAPI (import with 'import givapi').  
 
 # Functions
 get() is an internal function to handle GET requests.  
-post() is an internal function to handle POST requests.
+post() is an internal function to handle POST requests.  
 getData(serial, api_key) returns current data.  
-getDate(serial, api_key, date) returns data for said date. Requires an ISO8601 date.
-getPrs(serial, api_key) returns inverter presets.
-getSet(serial, api_key) returns inverter settings.
+getDate(serial, api_key, date) returns data for said date. Requires an ISO8601 date.  
+getPrs(serial, api_key) returns inverter presets.  
+getSet(serial, api_key) returns inverter settings.  
 getAcc(api_key) returns your account data.  
 getCom(api_key) returns com device data.  
 getSerial(api_key) returns the serial of the first inverter in the list.  
