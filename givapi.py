@@ -1,32 +1,44 @@
 import requests
 
-#!TODO: Add smart device data/requests and multiple-setting requests. Also add engineer+ and company+ stuff but I likely will not do that
-#Copyright Wilbur Williams <contact@wilburwilliams.uk> 2024. Licensed under GPL3.
-#If you can contribute to this please do so at https://github.com/ThisCatLikesCrypto/GivAPI
-#For documentation on the API please see https://beta.givenergy.cloud/docs/api/v1
-#This has been built for GivEnergy API version 1.22.0, and is for end-user accounts. Nothing that requires higher account types is included.
+"""
+TODO: Add smart device data/requests and multiple-setting requests.
+Also add engineer+ and company+ stuff but I likely will not do that.
 
-#Main get function
+Copyright Wilbur Williams <contact@wilburwilliams.uk> 2024. Licensed under GPL3.
+If you can contribute to this please do so at https://github.com/ThisCatLikesCrypto/GivAPI
+
+For documentation on the API please see https://beta.givenergy.cloud/docs/api/v1
+This has been built for GivEnergy API version 1.22.0, and is for end-user accounts.
+Nothing that requires higher account types is included.
+"""
+
 def get(api_key, url, params=None):
+    """
+    Main GET function.
+    Sends a GET request with the required headers and optional params.
+    Returns the 'data' key of the response JSON or an error code.
+    """
     headers = {"Accept": "application/json", "Content-Type": "application/json", "Authorization": f"Bearer {api_key}"}
-    if params == None:
+    if params is None:
         response = requests.get(url, headers=headers)
     else:
-        response = requests.get(url, headers=headers, params=params) #Cannot be triggered atm but leave in
+        response = requests.get(url, headers=headers, params=params)
     if response.status_code == 200 or 201:
-        # Success
         data = response.json()['data']
     else:
-        # Error
         data = {"error": response.status_code}
     return data
 
-#Main post function
 def post(api_key, url, value=None):
+    """
+    Main POST function.
+    Sends a POST request with a value payload if provided.
+    Returns the 'data' key of the response JSON or an error.
+    """
     headers = {"Accept": "application/json", "Content-Type": "application/json", "Authorization": f"Bearer {api_key}"}
     indata = {"value": value}
 
-    if value == None:
+    if value is None:
         response = requests.post(url, headers=headers)
     else:
         response = requests.post(url, headers=headers, json=indata)
@@ -36,144 +48,148 @@ def post(api_key, url, value=None):
             data = response.json()['data']
             return data
         except:
-            data = {"error": "Something went wrong. response.json() is "+response.json()}
+            data = {"error": "Something went wrong. response.json() is " + response.json()}
+    return {"error": response.status_code}
 
-##!Get functions
+# GET functions
 
-#!Account
-#Get account data, needs needs api:account to function
 def getAcc(api_key):
+    """Get account data. Requires scope: api:account."""
     url = 'https://api.givenergy.cloud/v1/account'
     return get(api_key, url)
 
-#!Inverter stuff
-
-#Gets current data, needs api:inverter:read to function
 def getData(serial, api_key):
-    url = "https://api.givenergy.cloud/v1/inverter/" + serial + "/system-data/latest"
+    """Get current inverter data. Requires scope: api:inverter:read."""
+    url = f"https://api.givenergy.cloud/v1/inverter/{serial}/system-data/latest"
     return get(api_key, url)
 
-#Get all data for a specific date, in 5 minute intervals, needs api:inverter to function
 def getDate(serial, api_key, date):
-    url = "https://api.givenergy.cloud/v1/inverter/" + serial + "/data-points/" + date
+    """Get inverter data for a specific date in 5-minute intervals. Requires scope: api:inverter."""
+    url = f"https://api.givenergy.cloud/v1/inverter/{serial}/data-points/{date}"
     return get(api_key, url)
 
-#Get communication device data, needs api:inverter:list
 def getCom(api_key):
+    """Get communication device data. Requires scope: api:inverter:list."""
     url = "https://api.givenergy.cloud/v1/communication-device"
     return get(api_key, url)
 
-#Get serial from api key, needs api:inverter:list, only works with one inverter
 def getSerial(api_key):
+    """Get inverter serial from API key. Requires scope: api:inverter:list."""
     return getCom(api_key)[0]['inverter']['serial']
 
-#Get EMS data, needs api:inverter:read
-def getEMS(serial, api_key): #if anyone with an EMS uses this please tell me whether it worked or not because I cannot verify it, since I don't have one
-    url = "https://api.givenergy.cloud/v1/ems/" + serial + "/system-data/latest"
+def getEMS(serial, api_key):
+    """
+    Get EMS (Energy Management System) data.
+    Requires scope: api:inverter:read.
+    Note: Not tested. Please report success/failure.
+    """
+    url = f"https://api.givenergy.cloud/v1/ems/{serial}/system-data/latest"
     return get(api_key, url)
 
-#Get inverter presets, needs api:inverter:control
 def getPrs(serial, api_key):
-    url = "https://api.givenergy.cloud/v1/inverter/" + serial + "/presets"
+    """Get inverter presets. Requires scope: api:inverter:control."""
+    url = f"https://api.givenergy.cloud/v1/inverter/{serial}/presets"
     return get(api_key, url)
 
-
-#Get inverter settings, needs api:inverter:control, yes the function name sounds cool
 def getSet(serial, api_key):
-    url = "https://api.givenergy.cloud/v1/inverter/" + serial + "/settings"
+    """Get inverter settings. Requires scope: api:inverter:control."""
+    url = f"https://api.givenergy.cloud/v1/inverter/{serial}/settings"
     return get(api_key, url)
 
+# EV charger functions (untested)
 
-#!EV charger stuff
-##!For ALL EV charger stuff I cannot verify whether it works or not, since I don't have a GivEnergy one. Please report back if you have one whether it works or not
-
-#Get list of chargers by UUID, needs api:ev-charger:list
 def getChgrs(api_key):
+    """Get list of EV chargers by UUID. Requires scope: api:ev-charger:list."""
     url = "https://api.givenergy.cloud/v1/ev-charger"
     return get(api_key, url)
 
-#Get data from charger by UUID, needs api:ev-charger:read
 def getChgr(UUID, api_key):
-    url = "https://api.givenergy.cloud/v1/ev-charger/" + UUID
+    """Get data from EV charger by UUID. Requires scope: api:ev-charger:read."""
+    url = f"https://api.givenergy.cloud/v1/ev-charger/{UUID}"
     return get(api_key, url)
 
-#Get meter data from charger by UUID, needs api:ev-charger:data
 def getChgd(UUID, api_key, start_time, end_time, measurandsNum=0, measurands=1, meteridsNum=0, meter_ids=1):
-    params = {"start_time": start_time, "end_time": end_time, f"measurands[{measurandsNum}]": measurands, f"meter_ids[{meteridsNum}]": meter_ids}
-    url = "https://api.givenergy.cloud/v1/ev-charger/" + UUID + "/meter-data"
+    """
+    Get meter data from EV charger.
+    Requires scope: api:ev-charger:data.
+    """
+    params = {
+        "start_time": start_time,
+        "end_time": end_time,
+        f"measurands[{measurandsNum}]": measurands,
+        f"meter_ids[{meteridsNum}]": meter_ids
+    }
+    url = f"https://api.givenergy.cloud/v1/ev-charger/{UUID}/meter-data"
     return get(api_key, url, params)
 
-#Get all charging sessions data (by UUID), needs api:ev-charger:data
 def getChgs(UUID, api_key):
-    url = "https://api.givenergy.cloud/v1/ev-charger/" + UUID + "/charging-sessions"
+    """Get all charging session data for a charger. Requires scope: api:ev-charger:data."""
+    url = f"https://api.givenergy.cloud/v1/ev-charger/{UUID}/charging-sessions"
     return get(api_key, url)
 
-#Get charger supported commands, needs api:ev-charger:control
 def getChgCmds(UUID, api_key):
-    url = "https://api.givenergy.cloud/v1/ev-charger/" + UUID + "/commands"
+    """Get charger-supported commands. Requires scope: api:ev-charger:control."""
+    url = f"https://api.givenergy.cloud/v1/ev-charger/{UUID}/commands"
     return get(api_key, url)
 
-#Get command data, needs api:ev-charger:control
 def getChCmd(UUID, api_key, command_id):
-    url = "https://api.givenergy.cloud/v1/ev-charger/" + UUID + "/commands/" + command_id
+    """Get data for a specific command. Requires scope: api:ev-charger:control."""
+    url = f"https://api.givenergy.cloud/v1/ev-charger/{UUID}/commands/{command_id}"
     return get(api_key, url)
 
-##!Post functions
+# POST functions
 
-#!EV Charger
-
-#Control an EV charger, needs api:ev-charger:control
 def conChgr(UUID, api_key, command_id):
-    url = "https://api.givenergy.cloud/v1/ev-charger/" + UUID + "/commands/" + str(command_id)
+    """Send a control command to an EV charger. Requires scope: api:ev-charger:control."""
+    url = f"https://api.givenergy.cloud/v1/ev-charger/{UUID}/commands/{command_id}"
     return post(api_key, url)
 
-#!Inverter
-
-#Modify inverter presets, needs api:inverter:control
 def modPrs(serial, api_key, preset):
-    url = "https://api.givenergy.cloud/v1/inverter/" + serial + "/presets/" + preset
+    """Modify inverter presets. Requires scope: api:inverter:control."""
+    url = f"https://api.givenergy.cloud/v1/inverter/{serial}/presets/{preset}"
     return post(api_key, url)
 
-#Read setting, needs api:inverter:control
 def readSet(serial, api_key, setting_id):
-    url = "https://api.givenergy.cloud/v1/inverter/" + serial + "/settings/" + str(setting_id) + "/read"
+    """Read a setting from the inverter. Requires scope: api:inverter:control."""
+    url = f"https://api.givenergy.cloud/v1/inverter/{serial}/settings/{setting_id}/read"
     return post(api_key, url)
 
-#Set setting, needs api:inverter:control
 def setSet(serial, api_key, setting_id, value):
-    url = "https://api.givenergy.cloud/v1/inverter/" + serial + "/settings/" + str(setting_id) + "/write"
+    """Set a setting on the inverter. Requires scope: api:inverter:control."""
+    url = f"https://api.givenergy.cloud/v1/inverter/{serial}/settings/{setting_id}/write"
     return post(api_key, url, value)
 
+# Extra APIs: Elexon and Carbon Intensity
 
-##!Extra: Elexon and Carbon Intensity APIs
 def getElexon():
+    """Get actual generation per type from Elexon."""
     url = "https://data.elexon.co.uk/bmrs/api/v1/generation/actual/per-type/day-total?format=json"
     headers = {"accept": "application/json"}
     response = requests.get(url=url, headers=headers)
     return response.json()
 
 def getGen():
+    """Get UK generation mix from Carbon Intensity API."""
     headers = {'Accept': 'application/json'}
-    r = requests.get('https://api.carbonintensity.org.uk/generation', params={}, headers = headers)
-    data = r.json()['data']
-    return data
+    r = requests.get('https://api.carbonintensity.org.uk/generation', params={}, headers=headers)
+    return r.json()['data']
 
 def getCO2():
+    """Get current UK carbon intensity from Carbon Intensity API."""
     headers = {'Accept': 'application/json'}
-    r = requests.get('https://api.carbonintensity.org.uk/intensity', params={}, headers = headers)
-    data = r.json()['data']
-    return data
+    r = requests.get('https://api.carbonintensity.org.uk/intensity', params={}, headers=headers)
+    return r.json()['data']
 
-#Example use
+# Example usage
 if __name__ == "__main__":
     api_key = "YOUR_KEY_HERE"
     try:
         serial = getSerial(api_key)
         print(getData(serial, api_key))
         if input("test post? (y/n): ") == "y":
-            print(readSet(serial, api_key, 96)) #96 is 'Pause Battery', I just needed something to test POST
+            print(readSet(serial, api_key, 96))  # 96 is 'Pause Battery'
     except KeyError:
-        print("Probably not authed correctly. Just testing elexon and CO2")
+        print("Probably not authed correctly. Just testing Elexon and CO2")
     print(getElexon())
     print(getGen())
     print(getCO2())
